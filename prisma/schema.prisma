@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Define your data models here
+// Admin and User models are used to manage notes
+// Notes can be created by users and managed by themselves
+// Admins can also manage notes, and they have a role field to distinguish between users and admins
+// Admins can moderate notes created by users, delete inappropriate content, and manage user accounts
+// Each note can have multiple tags 
+
+model note {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String?
+  user      user? @relation(fields: [userId], references: [id])
+  // tags      String[] @default([])
+}
+
+model user {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  notes     note[]
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
