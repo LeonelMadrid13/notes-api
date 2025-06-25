@@ -1,4 +1,6 @@
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+
 import { getUserByEmail } from '../controllers/userController.js';
 
 
@@ -9,7 +11,7 @@ export const loginUser = async (req, res) => {
     try {
         const user = await getUserByEmail(email);
         //checking to make sure the user entered the correct email/password combo
-        if (password === user.password) {
+        if (user && await bcrypt.compare(password, user.password)) {
             //if user log in success, generate a JWT token for the user with a secret key
             jwt.sign({ user }, key, { expiresIn: '1h' }, (err, token) => {
                 if (err) { console.log(err) }
