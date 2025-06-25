@@ -5,10 +5,11 @@ const prisma = new PrismaClient()
 
 export const createUser = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { ...rest } = req.body;
+        const { password } = req.body;
         const user = await prisma.user.create({
             data: {
-                email,
+                ...rest,
                 password: await bcrypt.hash(password, 10)
             }
         });
