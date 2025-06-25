@@ -36,7 +36,7 @@ A simple RESTful API to create, read, update, and delete notes. Built with Node.
 ## 🚀 Getting Started
 
 ```bash
-git clone https://github.com/yourusername/notes-api.git
+git clone https://github.com/LeonelMadrid13/notes-api.git
 cd notes-api
 npm install
 npm run dev
@@ -57,6 +57,5 @@ POST /notes
 ---
 
 ## 📬 Contact
-
-**Your Name** – [@twitter](https://twitter.com/yourhandle)  
-GitHub: [@yourusername](https://github.com/yourusername)
+ 
+GitHub: [LeonelMadrid13](https://github.com/LeonelMadrid13)
