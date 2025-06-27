@@ -4,14 +4,12 @@ const prisma = new PrismaClient();
 
 export const createNote = async (req, res) => {
     try {
-        const { title, content, user } = req.body;
+        const { title, content, userId } = req.body;
         const note = await prisma.note.create({
             data: {
                 title,
                 content,
-                user: {
-                    connect: { id: user }
-                }
+                userId // Assuming user is passed in the request body
             }
         });
         res.status(201).json(note);
@@ -22,8 +20,18 @@ export const createNote = async (req, res) => {
 }
 
 export const getAllNotes = async (req, res) => {
+    const { id } = req.headers;
+
+    if (!id) {
+        return res.status(400).json({ error: 'User ID is required' });
+    }
+    const userId = id.split(' ')[1];
     try {
-        const allNotes = await prisma.note.findMany();
+        const allNotes = await prisma.note.findMany({
+            where: {
+                userId: userId
+            }
+        });
         res.status(200).json(allNotes);
     } catch (error) {
         console.log(error);

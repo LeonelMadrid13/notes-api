@@ -15,7 +15,7 @@ export const loginUser = async (req, res) => {
             //if user log in success, generate a JWT token for the user with a secret key
             jwt.sign({ user }, key, { expiresIn: '1h' }, (err, token) => {
                 if (err) { console.log(err) }
-                res.send(token);
+                res.send({ token, id: user.id });
             });
         } else {
             console.log('ERROR: Could not log in');
