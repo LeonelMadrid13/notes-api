@@ -4,12 +4,13 @@ const prisma = new PrismaClient();
 
 export const createNote = async (req, res) => {
     try {
-        const { title, content, userId } = req.body;
+        const { title, content, userId, tags } = req.body;
         const note = await prisma.note.create({
             data: {
                 title,
                 content,
-                userId // Assuming user is passed in the request body
+                userId, // Assuming user is passed in the request body
+                tags
             }
         });
         res.status(201).json(note);
