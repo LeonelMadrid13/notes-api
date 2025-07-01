@@ -2,13 +2,21 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 import { getUserByEmail } from '../controllers/userController.js';
+import { handleError } from '../utils/handleError.js';
+
 
 
 const key = process.env.JWT_SECRET || 'privatekey';
 
 export const loginUser = async (req, res) => {
-    const { email, password } = req.body;
     try {
+        const { email, password } = req.body;
+
+        //checking if the user entered email and password
+        if (!email || !password) {
+            return res.status(400).json({ error: 'Email and password are required' });
+        }
+
         const user = await getUserByEmail(email);
         //checking to make sure the user entered the correct email/password combo
         if (user && await bcrypt.compare(password, user.password)) {
@@ -18,10 +26,10 @@ export const loginUser = async (req, res) => {
                 res.send({ token, id: user.id });
             });
         } else {
-            console.log('ERROR: Could not log in');
+            new handleError(res, new Error('Invalid email or password'), 'Could not login user');
         }
     } catch (error) {
-        console.error('ERROR: An error occurred while logging in', error);
+        new handleError(res, error, 'Login User Error');
     }
 }
 
@@ -30,8 +38,7 @@ export const verifyToken = (req, res) => {
     jwt.verify(req.token, key, (err, authorizedData) => {
         if (err) {
             //If error send Forbidden (403)
-            console.log('ERROR: Could not connect to the protected route');
-            res.sendStatus(403);
+            new handleError(res, err, 'Forbidden: Invalid token');
         } else {
             //If token is successfully verified, we can send the autorized data 
             res.json({

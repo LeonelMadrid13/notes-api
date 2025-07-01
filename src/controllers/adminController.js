@@ -1,4 +1,5 @@
 import { PrismaClient } from '../generated/prisma/index.js'
+import { handleError } from '../utils/handleError.js';
 
 const prisma = new PrismaClient()
 
@@ -7,8 +8,7 @@ export const getAllUsers = async (req, res) => {
         const allUsers = await prisma.user.findMany();
         res.status(200).json(allUsers);
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: error.message });
+        new handleError(res, error, 'Get All Users Error');
     }
 }
 
@@ -16,6 +16,11 @@ export const getAllUsers = async (req, res) => {
 export const isUserAdmin = async (req, res, next) => {
     try {
         const { id } = req.body
+
+        if (!id) {
+            return res.status(400).json({ error: 'User ID is required' });
+        }
+
         const user = await prisma.user.findUnique({
             where: { id: id }
         });
@@ -25,7 +30,6 @@ export const isUserAdmin = async (req, res, next) => {
             res.status(403).json({ error: 'Forbidden: You do not have permission to access this resource' });
         }
     } catch (error) {
-        console.error('ERROR: An error occurred while checking if the user is an admin', error);
-        res.status(500).json({ error: error.message });
+        new handleError(res, error, 'Admin Check Error');
     }
 }
