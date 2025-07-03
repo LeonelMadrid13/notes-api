@@ -26,6 +26,7 @@ RUN apt-get update && apt-get install -y openssl
 # Copy runtime-only files
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/swagger.yaml ./swagger.yaml
 COPY --from=build /app/pnpm-lock.yaml ./pnpm-lock.yaml
 # COPY --from=build /app/.env ./.env
 COPY --from=build /app/prisma ./prisma
