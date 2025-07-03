@@ -1,14 +1,14 @@
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
-import { getUserByEmail } from '../controllers/userController.js';
-import { handleError } from '../utils/handleError.js';
+const { getUserByEmail } = require('../controllers/userController.js');
+const { handleError } = require('../utils/handleError.js');
 
 
 
 const key = process.env.JWT_SECRET || 'privatekey';
 
-export const loginUser = async (req, res) => {
+const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -33,7 +33,7 @@ export const loginUser = async (req, res) => {
     }
 }
 
-export const verifyToken = (req, res) => {
+const verifyToken = (req, res) => {
     //verify the JWT token generated for the user
     jwt.verify(req.token, key, (err, authorizedData) => {
         if (err) {
@@ -49,4 +49,9 @@ export const verifyToken = (req, res) => {
         }
     })
 }
+
+module.exports = {
+    loginUser,
+    verifyToken
+};
 
