@@ -1,9 +1,10 @@
-const { prisma } = require('../lib/prisma.js');
+const { getPrismaClient } = require('../lib/prisma.js');
 const { handleError } = require('../utils/handleError.js');
 const bcrypt = require('bcrypt');
 
 const createUser = async (req, res) => {
     try {
+        const prisma = await getPrismaClient();
         const { ...rest } = req.body;
         const { password } = req.body;
 
@@ -37,6 +38,7 @@ const createUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     try {
+        const prisma = await getPrismaClient();
         const { id } = req.params;
 
         if (!id) {
@@ -62,6 +64,7 @@ const deleteUser = async (req, res) => {
 
 const getUserById = async (req, res) => {
     try {
+        const prisma = await getPrismaClient();
         const { id } = req.params;
 
         if (!id) {
@@ -80,6 +83,7 @@ const getUserById = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
+        const prisma = await getPrismaClient();
         const { id } = req.params;
 
         if (!id) {

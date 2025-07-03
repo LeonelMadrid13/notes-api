@@ -1,11 +1,16 @@
 // src/lib/prisma.js
-const { PrismaClient } = require('@prisma/client');
-
 let prisma;
+let isInitialized = false;
 
-// Initialize Prisma Client with error handling
-function initPrisma() {
+async function getPrismaClient() {
+    if (prisma && isInitialized) {
+        return prisma;
+    }
+
     try {
+        // Dynamic import to handle initialization issues
+        const { PrismaClient } = require('@prisma/client');
+
         if (process.env.NODE_ENV === 'production') {
             prisma = new PrismaClient({
                 log: ['error'],
@@ -18,14 +23,23 @@ function initPrisma() {
             }
             prisma = global.prisma;
         }
+
+        // Test the connection
+        await prisma.$connect();
+        isInitialized = true;
+
         return prisma;
     } catch (error) {
-        console.error('Failed to initialize Prisma Client:', error);
-        throw error;
+        console.error('Prisma Client initialization failed:', error);
+        throw new Error('Database connection failed. Please try again later.');
     }
 }
 
-// Initialize immediately
-prisma = initPrisma();
+// Graceful shutdown
+process.on('beforeExit', async () => {
+    if (prisma) {
+        await prisma.$disconnect();
+    }
+});
 
-module.exports = { prisma };
+module.exports = { getPrismaClient };

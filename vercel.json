@@ -1,12 +1,15 @@
 {
     "version": 2,
+    "buildCommand": "prisma generate",
     "builds": [
         {
             "src": "api/index.js",
             "use": "@vercel/node",
             "config": {
                 "includeFiles": [
-                    "prisma/**"
+                    "prisma/schema.prisma",
+                    "node_modules/.prisma/**",
+                    "node_modules/@prisma/**"
                 ]
             }
         }

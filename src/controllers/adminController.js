@@ -1,9 +1,10 @@
-const { prisma } = require('../lib/prisma.js');
+const { getPrismaClient } = require('../lib/prisma.js');
 const { handleError } = require('../utils/handleError.js');
 
 
 const getAllUsers = async (req, res) => {
     try {
+        const prisma = await getPrismaClient();
         const allUsers = await prisma.user.findMany();
         res.status(200).json(allUsers);
     } catch (error) {
@@ -13,6 +14,7 @@ const getAllUsers = async (req, res) => {
 
 const isUserAdmin = async (req, res, next) => {
     try {
+        const prisma = await getPrismaClient();
         const { id } = req.body;
 
         if (!id) {

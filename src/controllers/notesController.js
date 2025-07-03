@@ -1,8 +1,9 @@
-const { prisma } = require('../lib/prisma.js');
+const { getPrismaClient } = require('../lib/prisma.js');
 const { handleError } = require('../utils/handleError.js');
 
 const createNote = async (req, res) => {
     try {
+        const prisma = await getPrismaClient();
         const { title, content, userId, tags } = req.body;
 
         if (!title || !content || !userId) {
@@ -24,12 +25,13 @@ const createNote = async (req, res) => {
 }
 
 const getAllNotes = async (req, res) => {
-    const { id } = req.headers;
-    if (!id || !id.startsWith('id ')) {
-        return res.status(400).json({ error: 'Invalid or missing user ID' });
-    }
-    const userId = id.split(' ')[1];
     try {
+        const prisma = await getPrismaClient();
+        const { id } = req.headers;
+        if (!id || !id.startsWith('id ')) {
+            return res.status(400).json({ error: 'Invalid or missing user ID' });
+        }
+        const userId = id.split(' ')[1];
         const allNotes = await prisma.note.findMany({
             where: {
                 userId: userId
@@ -43,6 +45,7 @@ const getAllNotes = async (req, res) => {
 
 const getNoteById = async (req, res) => {
     try {
+        const prisma = await getPrismaClient();
         const { id } = req.params;
 
         if (!id) {
@@ -63,6 +66,7 @@ const getNoteById = async (req, res) => {
 
 const updateNote = async (req, res) => {
     try {
+        const prisma = await getPrismaClient();
         const { id } = req.params;
         const { title, content, tags } = req.body;
 
@@ -94,6 +98,7 @@ const updateNote = async (req, res) => {
 
 const deleteNote = async (req, res) => {
     try {
+        const prisma = await getPrismaClient();
         const { id } = req.params;
 
         if (!id) {
