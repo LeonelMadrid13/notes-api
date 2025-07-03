@@ -34,3 +34,5 @@ app.listen(PORT, () => {
         console.log('POST /api/auth/login -> Login a user');
     }
 });
+
+module.exports = app;
