@@ -1,7 +1,5 @@
-const { PrismaClient } = require("../generated/prisma/index.js");
+const { prisma } = require('../lib/prisma.js');
 const { handleError } = require('../utils/handleError.js');
-
-const prisma = new PrismaClient();
 
 const createNote = async (req, res) => {
     try {

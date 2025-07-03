@@ -1,8 +1,6 @@
-const { PrismaClient } = require('../generated/prisma/index.js');
+const { prisma } = require('../lib/prisma.js');
 const { handleError } = require('../utils/handleError.js');
 const bcrypt = require('bcrypt');
-
-const prisma = new PrismaClient();
 
 const createUser = async (req, res) => {
     try {
