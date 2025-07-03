@@ -1,8 +1,8 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
-const { getUserByEmail } = require('../controllers/userController.js');
-const { handleError } = require('../utils/handleError.js');
+import { getUserByEmail } from '../controllers/userController.js';
+import { handleError } from '../utils/handleError.js';
 
 
 
@@ -50,7 +50,7 @@ const verifyToken = (req, res) => {
     })
 }
 
-module.exports = {
+export {
     loginUser,
     verifyToken
 };

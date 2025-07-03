@@ -9,7 +9,7 @@ async function getPrismaClient() {
 
     try {
         // Dynamic import to handle initialization issues
-        const { PrismaClient } = require('@prisma/client');
+        const { PrismaClient } = await import('@prisma/client');
 
         if (process.env.NODE_ENV === 'production') {
             prisma = new PrismaClient({
@@ -42,4 +42,4 @@ process.on('beforeExit', async () => {
     }
 });
 
-module.exports = { getPrismaClient };
+export { getPrismaClient };

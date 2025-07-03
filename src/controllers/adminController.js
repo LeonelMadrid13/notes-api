@@ -1,5 +1,5 @@
-const { getPrismaClient } = require('../lib/prisma.js');
-const { handleError } = require('../utils/handleError.js');
+import { getPrismaClient } from '../lib/prisma.js';
+import { handleError } from '../utils/handleError.js';
 
 
 const getAllUsers = async (req, res) => {
@@ -34,7 +34,7 @@ const isUserAdmin = async (req, res, next) => {
     }
 }
 
-module.exports = {
+export {
     getAllUsers,
     isUserAdmin
 };

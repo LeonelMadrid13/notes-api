@@ -1,9 +1,9 @@
 // File: src/routes/userRouter.js
 
-const express = require('express');
-const { getUserById, updateUser, deleteUser } = require('../controllers/userController.js');
-const { getAllUsers, isUserAdmin } = require('../controllers/adminController.js');
-const { checkToken } = require('../middlewares/authMiddleware.js');
+import express from 'express';
+import { getUserById, updateUser, deleteUser } from '../controllers/userController.js';
+import { getAllUsers, isUserAdmin } from '../controllers/adminController.js';
+import { checkToken } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
@@ -18,4 +18,4 @@ router.get('/:id', getUserById);
 router.put('/:id', updateUser);
 router.delete('/:id', deleteUser);
 
-module.exports = router;
+export default router;

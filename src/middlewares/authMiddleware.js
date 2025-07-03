@@ -14,6 +14,6 @@ const checkToken = (req, res, next) => {
     }
 }
 
-module.exports = {
+export {
     checkToken
 };

@@ -10,9 +10,9 @@ info:
     url: https://opensource.org/licenses/MIT
 
 servers:
-  - url: http://localhost:3000
+  - url: http://localhost:5000
     description: Development server
-  - url: https://your-vercel-deployment.vercel.app
+  - url: https://notes-api-1-ffgg.onrender.com
     description: Production server
 
 tags:

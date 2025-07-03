@@ -1,6 +1,6 @@
-const { getPrismaClient } = require('../lib/prisma.js');
-const { handleError } = require('../utils/handleError.js');
-const bcrypt = require('bcrypt');
+import { getPrismaClient } from '../lib/prisma.js';
+import { handleError } from '../utils/handleError.js';
+import bcrypt from 'bcrypt';
 
 const createUser = async (req, res) => {
     try {
@@ -100,9 +100,23 @@ const updateUser = async (req, res) => {
     }
 }
 
-module.exports = {
+const getUserByEmail = async (email) => {
+    try {
+        const prisma = await getPrismaClient();
+        const user = await prisma.user.findUnique({
+            where: { email: email }
+        });
+        return user;
+    } catch (error) {
+        console.error('Get User By Email Error:', error);
+        throw error;
+    }
+}
+
+export {
     createUser,
     deleteUser,
     getUserById,
-    updateUser
+    updateUser,
+    getUserByEmail
 };

@@ -1,5 +1,5 @@
-const { getPrismaClient } = require('../lib/prisma.js');
-const { handleError } = require('../utils/handleError.js');
+import { getPrismaClient } from '../lib/prisma.js';
+import { handleError } from '../utils/handleError.js';
 
 const createNote = async (req, res) => {
     try {
@@ -122,7 +122,7 @@ const deleteNote = async (req, res) => {
     }
 }
 
-module.exports = {
+export {
     createNote,
     getAllNotes,
     getNoteById,

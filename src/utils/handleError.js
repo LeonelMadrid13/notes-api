@@ -3,6 +3,6 @@ function handleError(res, error, context = 'Server error') {
     return res.status(500).json({ error: error?.message || 'Unexpected server error' });
 }
 
-module.exports = {
+export {
     handleError
 };
