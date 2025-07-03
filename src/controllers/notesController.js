@@ -1,9 +1,9 @@
-import { PrismaClient } from "../generated/prisma/index.js";
-import { handleError } from '../utils/handleError.js';
+const { PrismaClient } = require("../generated/prisma/index.js");
+const { handleError } = require('../utils/handleError.js');
 
 const prisma = new PrismaClient();
 
-export const createNote = async (req, res) => {
+const createNote = async (req, res) => {
     try {
         const { title, content, userId, tags } = req.body;
 
@@ -15,17 +15,17 @@ export const createNote = async (req, res) => {
             data: {
                 title,
                 content,
-                userId, // Assuming user is passed in the request body
+                userId,
                 tags
             }
         });
         res.status(201).json(note);
     } catch (error) {
-        new handleError(res, error, 'Create Note Error');
+        handleError(res, error, 'Create Note Error');
     }
 }
 
-export const getAllNotes = async (req, res) => {
+const getAllNotes = async (req, res) => {
     const { id } = req.headers;
     if (!id || !id.startsWith('id ')) {
         return res.status(400).json({ error: 'Invalid or missing user ID' });
@@ -39,11 +39,11 @@ export const getAllNotes = async (req, res) => {
         });
         res.status(200).json(allNotes);
     } catch (error) {
-        new handleError(res, error, 'Get All Notes Error');
+        handleError(res, error, 'Get All Notes Error');
     }
 }
 
-export const getNoteById = async (req, res) => {
+const getNoteById = async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -59,11 +59,11 @@ export const getNoteById = async (req, res) => {
         }
         res.status(200).json(note);
     } catch (error) {
-        new handleError(res, error, 'Get Note By ID Error');
+        handleError(res, error, 'Get Note By ID Error');
     }
 }
 
-export const updateNote = async (req, res) => {
+const updateNote = async (req, res) => {
     try {
         const { id } = req.params;
         const { title, content, tags } = req.body;
@@ -71,7 +71,7 @@ export const updateNote = async (req, res) => {
         if (!id || !title || !content) {
             return res.status(400).json({ error: 'Note ID, title, and content are required' });
         }
-        // Check if the note exists before updating
+
         const existingNote = await prisma.note.findUnique({
             where: { id }
         });
@@ -90,18 +90,18 @@ export const updateNote = async (req, res) => {
         });
         res.status(200).json(note);
     } catch (error) {
-        new handleError(res, error, 'Update Note Error');
+        handleError(res, error, 'Update Note Error');
     }
 }
 
-export const deleteNote = async (req, res) => {
+const deleteNote = async (req, res) => {
     try {
         const { id } = req.params;
 
         if (!id) {
             return res.status(400).json({ error: 'Note ID is required' });
         }
-        // Check if the note exists before deleting
+
         const existingNote = await prisma.note.findUnique({
             where: { id }
         });
@@ -113,8 +113,16 @@ export const deleteNote = async (req, res) => {
         await prisma.note.delete({
             where: { id }
         });
-        res.status(204).send();
+        res.status(200).json({ message: `Note with ID ${id} deleted successfully` });
     } catch (error) {
-        new handleError(res, error, 'Delete Note Error');
+        handleError(res, error, 'Delete Note Error');
     }
 }
+
+module.exports = {
+    createNote,
+    getAllNotes,
+    getNoteById,
+    updateNote,
+    deleteNote
+};

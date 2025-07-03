@@ -1,7 +1,9 @@
-import express from 'express';
-import { loginUser, verifyToken } from '../controllers/loginController.js';
-import { createUser } from '../controllers/userController.js';
-import { checkToken } from '../middlewares/authMiddleware.js';
+// File: src/routes/loginRouter.js
+
+const express = require('express');
+const { loginUser, verifyToken } = require('../controllers/loginController.js');
+const { createUser } = require('../controllers/userController.js');
+const { checkToken } = require('../middlewares/authMiddleware.js');
 
 const router = express.Router();
 
@@ -10,4 +12,4 @@ router.post('/register', createUser);
 //This is a protected route 
 router.get('/data', checkToken, verifyToken);
 
-export default router;
+module.exports = router;

@@ -26,10 +26,10 @@ export const loginUser = async (req, res) => {
                 res.send({ token, id: user.id });
             });
         } else {
-            new handleError(res, new Error('Invalid email or password'), 'Could not login user');
+            handleError(res, new Error('Invalid email or password'), 'Could not login user');
         }
     } catch (error) {
-        new handleError(res, error, 'Login User Error');
+        handleError(res, error, 'Login User Error');
     }
 }
 
@@ -38,7 +38,7 @@ export const verifyToken = (req, res) => {
     jwt.verify(req.token, key, (err, authorizedData) => {
         if (err) {
             //If error send Forbidden (403)
-            new handleError(res, err, 'Forbidden: Invalid token');
+            handleError(res, err, 'Forbidden: Invalid token');
         } else {
             //If token is successfully verified, we can send the autorized data 
             res.json({

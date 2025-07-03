@@ -1,13 +1,17 @@
-import express from 'express';
-import { createNote, getAllNotes, updateNote, deleteNote, getNoteById } from '../controllers/notesController.js';
-import { checkToken } from '../middlewares/authMiddleware.js';
+// File: src/routes/notesRouter.js
+
+const express = require('express');
+const { createNote, getAllNotes, updateNote, deleteNote, getNoteById } = require('../controllers/notesController.js');
+const { checkToken } = require('../middlewares/authMiddleware.js');
 
 const router = express.Router();
 
-router.post('/', checkToken, createNote);
-router.get('/', checkToken, getAllNotes);
-router.get('/:id', checkToken, getNoteById);
-router.put('/:id', checkToken, updateNote);
-router.delete('/:id', checkToken, deleteNote);
+router.use(checkToken);
 
-export default router;
+router.post('/', createNote);
+router.get('/', getAllNotes);
+router.get('/:id', getNoteById);
+router.put('/:id', updateNote);
+router.delete('/:id', deleteNote);
+
+module.exports = router;

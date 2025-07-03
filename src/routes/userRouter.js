@@ -1,14 +1,21 @@
-import express from 'express';
-import { getUserById, updateUser, deleteUser } from '../controllers/userController.js';
-import { getAllUsers, isUserAdmin } from '../controllers/adminController.js';
-import { checkToken } from '../middlewares/authMiddleware.js';
+// File: src/routes/userRouter.js
+
+const express = require('express');
+const { getUserById, updateUser, deleteUser } = require('../controllers/userController.js');
+const { getAllUsers, isUserAdmin } = require('../controllers/adminController.js');
+const { checkToken } = require('../middlewares/authMiddleware.js');
 
 const router = express.Router();
 
-// Route to create a new user
-router.get('/', checkToken, isUserAdmin, getAllUsers);
-router.get('/:id', checkToken, getUserById);
-router.put('/:id', checkToken, updateUser);
-router.delete('/:id', checkToken, deleteUser);
+// Apply authentication middleware to all routes
+router.use(checkToken);
 
-export default router;
+// Get all users (admin only)
+router.get('/', isUserAdmin, getAllUsers);
+
+// Get, update, or delete a user by ID
+router.get('/:id', getUserById);
+router.put('/:id', updateUser);
+router.delete('/:id', deleteUser);
+
+module.exports = router;
