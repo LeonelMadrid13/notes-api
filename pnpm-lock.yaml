@@ -26,6 +26,9 @@ importers:
       nodemon:
         specifier: ^3.1.10
         version: 3.1.10
+      serverless-http:
+        specifier: ^3.2.0
+        version: 3.2.0
       vercel:
         specifier: ^44.2.11
         version: 44.2.11
@@ -1432,6 +1435,10 @@ packages:
   serve-static@2.2.0:
     resolution: {integrity: sha512-61g9pCh0Vnh7IutZjtLGGpTA355+OPn2TyDv/6ivP2h/AdAVX9azsoxmg2/M6nZeQZNYBEwIcsne1mJd9oQItQ==}
     engines: {node: '>= 18'}
+
+  serverless-http@3.2.0:
+    resolution: {integrity: sha512-QvSyZXljRLIGqwcJ4xsKJXwkZnAVkse1OajepxfjkBXV0BMvRS5R546Z4kCBI8IygDzkQY0foNPC/rnipaE9pQ==}
+    engines: {node: '>=12.0'}
 
   setprototypeof@1.1.1:
     resolution: {integrity: sha512-JvdAWfbXeIGaZ9cILp38HntZSFSo3mWg6xGcJJsd+d4aRMOqauag1C63dJfDw7OaMYwEbHMOxEZ1lqVRYP2OAw==}
@@ -3099,6 +3106,8 @@ snapshots:
       send: 1.2.0
     transitivePeerDependencies:
       - supports-color
+
+  serverless-http@3.2.0: {}
 
   setprototypeof@1.1.1: {}
 
