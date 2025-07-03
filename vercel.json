@@ -11,6 +11,5 @@
             "src": "/(.*)",
             "dest": "/api/index.js"
         }
-    ],
-    "buildCommand": "pnpm install && pnpm prisma generate"
+    ]
 }
