@@ -1,25 +1,40 @@
-# Use Node.js base image
-FROM node:18
-
-# Set working directory
+# === Base stage: install pnpm and dependencies ===
+FROM node:18 AS deps
 WORKDIR /app
 
-# Install pnpm
 RUN npm install -g pnpm
-
-# Copy package files and install dependencies
-COPY pnpm-lock.yaml* package.json ./
-RUN pnpm approve-builds
+COPY package.json pnpm-lock.yaml ./
 RUN pnpm install
 
-# Copy rest of the project
-COPY . .
+# === Build stage: copy everything and generate client ===
+FROM node:18 AS build
+WORKDIR /app
 
-# Generate Prisma client
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
 RUN npx prisma generate
 
-# Expose your app port
-EXPOSE 1010
+# === Final runtime stage ===
+FROM node:18-slim AS runtime
+WORKDIR /app
 
-# Start the app
+# Install pnpm again
+RUN npm install -g pnpm
+RUN apt-get update && apt-get install -y openssl
+
+
+# Copy runtime-only files
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=build /app/.env ./.env
+COPY --from=build /app/prisma ./prisma
+COPY --from=build /app/src ./src
+
+# Optional envs
+ENV NODE_ENV=production
+ENV PORT=5000
+
+EXPOSE 5000
+
 CMD ["pnpm", "start"]

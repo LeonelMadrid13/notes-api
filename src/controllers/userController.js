@@ -76,7 +76,8 @@ export const getUserById = async (req, res) => {
         const user = await prisma.user.findUnique({
             where: { id: id }
         });
-        res.status(200).json(user);
+        const username = { username: user.name }
+        res.status(200).json(username);
     } catch (error) {
         new handleError(res, error, 'Get User By ID Error');
     }

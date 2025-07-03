@@ -4,10 +4,10 @@
 		{
 			"label": "Start Development Server",
 			"type": "shell",
-			"command": "pnpm",
+			"command": "docker-compose",
 			"args": [
-				"run",
-				"dev"
+				"up",
+				"--build"
 			],
 			"group": "build",
 			"isBackground": true,

@@ -27,9 +27,8 @@ export const createNote = async (req, res) => {
 
 export const getAllNotes = async (req, res) => {
     const { id } = req.headers;
-
-    if (!id) {
-        return res.status(400).json({ error: 'User ID is required' });
+    if (!id || !id.startsWith('id ')) {
+        return res.status(400).json({ error: 'Invalid or missing user ID' });
     }
     const userId = id.split(' ')[1];
     try {
@@ -67,7 +66,7 @@ export const getNoteById = async (req, res) => {
 export const updateNote = async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, content } = req.body;
+        const { title, content, tags } = req.body;
 
         if (!id || !title || !content) {
             return res.status(400).json({ error: 'Note ID, title, and content are required' });
@@ -85,7 +84,8 @@ export const updateNote = async (req, res) => {
             where: { id },
             data: {
                 title,
-                content
+                content,
+                tags
             }
         });
         res.status(200).json(note);
