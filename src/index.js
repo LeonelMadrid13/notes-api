@@ -26,7 +26,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.listen(PORT, () => {
     console.log(`Server is running on  http://localhost:${PORT}`);
     // log all routes
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
         console.log('Development mode: Logging all routes');
         console.log('Available routes:');
         console.log('GET /api/notes -> Get all notes');
@@ -39,3 +39,5 @@ app.listen(PORT, () => {
         console.log('POST /api/auth/login -> Login a user');
     }
 });
+
+export default app;

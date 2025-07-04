@@ -30,7 +30,12 @@ const createUser = async (req, res) => {
                 password: await bcrypt.hash(password, 10)
             }
         });
-        res.status(201).json(user);
+
+        // Exclude password from the response
+        const { password: _, ...userWithoutPassword } = user;
+        // Return the user object without the password
+
+        res.status(201).json(userWithoutPassword);
     } catch (error) {
         handleError(res, error, 'Create User Error');
     }
