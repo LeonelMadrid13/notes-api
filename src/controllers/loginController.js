@@ -4,8 +4,6 @@ import bcrypt from 'bcrypt';
 import { getUserByEmail } from '../controllers/userController.js';
 import { handleError } from '../utils/handleError.js';
 
-
-
 const key = process.env.JWT_SECRET || 'privatekey';
 
 const loginUser = async (req, res) => {

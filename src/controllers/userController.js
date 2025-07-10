@@ -1,6 +1,10 @@
 import { getPrismaClient } from '../lib/prisma.js';
 import { handleError } from '../utils/handleError.js';
+
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+
+const key = process.env.JWT_SECRET || 'privatekey';
 
 const createUser = async (req, res) => {
     try {
@@ -32,10 +36,16 @@ const createUser = async (req, res) => {
         });
 
         // Exclude password from the response
-        const { password: _, ...userWithoutPassword } = user;
+        const { id } = user;
         // Return the user object without the password
 
-        res.status(201).json(userWithoutPassword);
+        const payload = jwt.sign({ id }, key, { expiresIn: '1h' }, (err, token) => {
+            if (err) { console.log(err) }
+            res.send({ token, id: user.id });
+        });
+
+
+        res.status(201).json(payload);
     } catch (error) {
         handleError(res, error, 'Create User Error');
     }
