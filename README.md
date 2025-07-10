@@ -1,50 +1,49 @@
 
 # 📌 Notes API  
 
-A simple RESTful API to create, read, update, and delete notes. Built with Node.js and Express.js.
+RESTful API for a full-stack notes app. Built with Express, Prisma, JWT auth, and Swagger docs. Supports users, notes, and role-based admin access.
 
 ---
 
-## 🛠️ Tech Stack
+## 🔧 Tech Stack
 
-- **Language**: JavaScript (Node.js)
-- **Framework**: Express.js
-- **ORM**: Prisma
-- **Database**: supabase
-
----
-
-## 🔥 Features
-
-- ✅ Create a new note  
-- 📝 Read all or a single note  
-- ✏️ Update a note  
-- ❌ Delete a note  
-
-- ✅ Create a new User  
-- 📝 Get all users  
-- ✏️ Update a user  
-- ❌ Delete a user  
+- **Express.js** – Fast and lightweight Node.js server
+- **Prisma ORM** – Database modeling and querying
+- **PostgreSQL** – (or your current DB)
+- **JWT Authentication** – Secure login and route protection
+- **Swagger UI** – Interactive API documentation
+- **Role-Based Access Control** – Admin & regular users
 
 ---
 
-## 📦 API Endpoints
+## 📌 Features
 
-| Method | Endpoint         | Description         |
-|--------|------------------|---------------------|
-| GET    | `/api/notes`     | Get all notes       |
-| GET    | `/api/notes/:id` | Get a specific note |
-| POST   | `/api/notes`     | Create a new note   |
-| PUT    | `/api/notes/:id` | Update a note       |
-| DELETE | `/api/notes/:id` | Delete a note       |
-|--------|------------------|---------------------|
-| GET    | `/api/users`     | Get all notes       |
-| GET    | `/api/users/:id` | Get a specific note |
-| POST   | `/api/users`     | Create a new note   |
-| PUT    | `/api/users/:id` | Update a note       |
-| DELETE | `/api/users/:id` | Delete a note       |
+- ✅ **User Registration & Login**  
+  Secure signup and login using **hashed passwords** and **JWT-based authentication**.
+
+- 🔐 **Role-Based Access Control (RBAC)**  
+  Distinguish between **admin** and **regular** users for protected routes and permissions.
+
+- 🧾 **Notes Management**  
+  CRUD operations for user-specific notes — create, read, update, and delete.
+
+- 📄 **Swagger UI Documentation**  
+  Automatically generated, interactive API docs available at `/api-docs`.
+
+- 🧠 **Middleware for Auth & Access**  
+  Token verification, `requireAdmin`, and `requireSelfOrAdmin` middleware to guard sensitive routes.
+
+- 🗂️ **Modular Express Routing**  
+  Clean separation of concerns between controllers, middleware, and routes.
+
+- ⚙️ **Environment-Based Configuration**  
+  Uses `.env` for DB connection, secret keys, and port config.
 
 ---
+
+## 📚 Live API Docs
+
+> 🔗 [Swagger UI](https://notes-api-1-ffgg.onrender.com/api-docs/)
 
 ## 🚀 Getting Started
 
