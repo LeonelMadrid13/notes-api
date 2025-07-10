@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
+import sanitizer from 'perfect-express-sanitizer';
 
 import notesRoutes from './routes/notesRouter.js';
 import userRoutes from './routes/userRouter.js';
@@ -18,6 +19,14 @@ app.use(express.urlencoded({ extended: true }));
 
 // Middleware to handle CORS
 app.use(cors());
+
+app.use(sanitizer.clean({
+    xss: true,
+    noSql: true,
+    sql: true,
+    sqlLevel: 5,
+    noSqlLevel: 5
+}));
 
 app.use('/api', utilsRouter);
 app.use('/api/notes', notesRoutes);
