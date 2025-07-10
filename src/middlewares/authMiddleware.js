@@ -30,7 +30,6 @@ const checkToken = (req, res, next) => {
         }
 
         // 🧠 Attach decoded payload to req.user
-        console.log('Token verified successfully:', decoded);
         req.user = decoded;
         next();
     });
