@@ -4,6 +4,7 @@ import express from 'express';
 import { getUserById, updateUser, deleteUser } from '../controllers/userController.js';
 import { getAllUsers, isUserAdmin } from '../controllers/adminController.js';
 import { checkToken } from '../middlewares/authMiddleware.js';
+import { requireSelfOrAdmin } from '../middlewares/requireSelfOrAdmin.js';
 
 const router = express.Router();
 
@@ -14,8 +15,8 @@ router.use(checkToken);
 router.get('/', isUserAdmin, getAllUsers);
 
 // Get, update, or delete a user by ID
-router.get('/:id', getUserById);
-router.put('/:id', updateUser);
-router.delete('/:id', deleteUser);
+router.get('/:id', requireSelfOrAdmin, getUserById);
+router.put('/:id', requireSelfOrAdmin, updateUser);
+router.delete('/:id', requireSelfOrAdmin, deleteUser);
 
 export default router;

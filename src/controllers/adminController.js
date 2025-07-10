@@ -5,12 +5,15 @@ import { handleError } from '../utils/handleError.js';
 const getAllUsers = async (req, res) => {
     try {
         const prisma = await getPrismaClient();
-        const allUsers = await prisma.user.findMany();
-        res.status(200).json(allUsers);
+        const users = await prisma.user.findMany({
+            select: { id: true, name: true, email: true, isAdmin: true },
+        });
+        res.status(200).json(users);
     } catch (error) {
         handleError(res, error, 'Get All Users Error');
     }
-}
+};
+
 
 const isUserAdmin = async (req, res, next) => {
     try {

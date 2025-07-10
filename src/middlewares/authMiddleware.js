@@ -1,19 +1,26 @@
-//Check to make sure header is not undefined, if so, return Forbidden (403)
+import jwt from 'jsonwebtoken';
+
+const key = process.env.JWT_SECRET || 'privatekey';
+
 const checkToken = (req, res, next) => {
     const header = req.headers['authorization'];
 
-    if (typeof header !== 'undefined') {
-        const bearer = header.split(' ');
-        const token = bearer[1];
-
-        req.token = token;
-        next();
-    } else {
-        //If header is undefined return Forbidden (403)
-        res.sendStatus(403)
+    if (!header) {
+        return res.status(403).json({ success: false, error: 'No token provided' });
     }
-}
 
-export {
-    checkToken
+    const bearer = header.split(' ');
+    const token = bearer[1];
+
+    jwt.verify(token, key, (err, decoded) => {
+        if (err) {
+            return res.status(403).json({ success: false, error: 'Invalid token' });
+        }
+
+        // ✅ Attach user info to req.user
+        req.user = decoded;
+        next();
+    });
 };
+
+export { checkToken };

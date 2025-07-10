@@ -10,46 +10,56 @@ const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        //checking if the user entered email and password
         if (!email || !password) {
-            return res.status(400).json({ error: 'Email and password are required' });
+            return res
+                .status(400)
+                .json({ success: false, error: 'Email and password are required' });
         }
 
         const user = await getUserByEmail(email);
-        //checking to make sure the user entered the correct email/password combo
-        if (user && await bcrypt.compare(password, user.password)) {
-            //if user log in success, generate a JWT token for the user with a secret key
-            jwt.sign({ user }, key, { expiresIn: '1h' }, (err, token) => {
-                if (err) { console.log(err) }
-                res.send({ token, id: user.id });
-            });
-        } else {
-            handleError(res, new Error('Invalid email or password'), 'Could not login user');
+        if (!user) {
+            return res
+                .status(401)
+                .json({ success: false, error: 'Invalid email or password' });
         }
+
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+            return res
+                .status(401)
+                .json({ success: false, error: 'Invalid email or password' });
+        }
+
+        const token = jwt.sign(
+            {
+                id: user.id,
+                isAdmin: user.isAdmin,
+            },
+            key,
+            { expiresIn: '1h' }
+        );
+
+
+        const { id, name, email: userEmail, isAdmin } = user;
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                token,
+                user: {
+                    id,
+                    name,
+                    email: userEmail,
+                    isAdmin,
+                },
+            },
+        });
     } catch (error) {
         handleError(res, error, 'Login User Error');
     }
-}
-
-const verifyToken = (req, res) => {
-    //verify the JWT token generated for the user
-    jwt.verify(req.token, key, (err, authorizedData) => {
-        if (err) {
-            //If error send Forbidden (403)
-            handleError(res, err, 'Forbidden: Invalid token');
-        } else {
-            //If token is successfully verified, we can send the autorized data 
-            res.json({
-                message: 'Successful log in',
-                authorizedData
-            });
-            console.log('SUCCESS: Connected to protected route');
-        }
-    })
-}
+};
 
 export {
-    loginUser,
-    verifyToken
+    loginUser
 };
 

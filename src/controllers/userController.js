@@ -1,3 +1,5 @@
+// src/controllers/userController.js
+
 import { getPrismaClient } from '../lib/prisma.js';
 import { handleError } from '../utils/handleError.js';
 
@@ -9,47 +11,35 @@ const key = process.env.JWT_SECRET || 'privatekey';
 const createUser = async (req, res) => {
     try {
         const prisma = await getPrismaClient();
-        const { ...rest } = req.body;
-        const { password } = req.body;
+        const { name, email, password } = req.body;
 
-        const existingUser = await prisma.user.findUnique({
-            where: { email: rest.email }
-        });
+        if (!email || !name || !password) {
+            return res.status(400).json({ success: false, error: 'Missing required fields' });
+        }
 
+        const existingUser = await prisma.user.findUnique({ where: { email } });
         if (existingUser) {
-            return res.status(400).json({ error: 'User with this email already exists' });
-        }
-
-        if (!rest.email || !rest.name) {
-            return res.status(400).json({ error: 'Email and name are required' });
-        }
-
-        if (!password) {
-            return res.status(400).json({ error: 'Password is required' });
+            return res.status(400).json({ success: false, error: 'User with this email already exists' });
         }
 
         const user = await prisma.user.create({
             data: {
-                ...rest,
-                password: await bcrypt.hash(password, 10)
-            }
+                name,
+                email,
+                password: await bcrypt.hash(password, 10),
+            },
         });
 
-        // Exclude password from the response
-        const { id } = user;
-        // Return the user object without the password
+        const token = jwt.sign({ id: user.id }, key, { expiresIn: '1h' });
 
-        const payload = jwt.sign({ id }, key, { expiresIn: '1h' }, (err, token) => {
-            if (err) { console.log(err) }
-            res.send({ token, id: user.id });
+        return res.status(201).json({
+            success: true,
+            data: { token, id: user.id },
         });
-
-
-        res.status(201).json(payload);
     } catch (error) {
         handleError(res, error, 'Create User Error');
     }
-}
+};
 
 const deleteUser = async (req, res) => {
     try {
@@ -57,25 +47,24 @@ const deleteUser = async (req, res) => {
         const { id } = req.params;
 
         if (!id) {
-            return res.status(400).json({ error: 'User ID is required' });
+            return res.status(400).json({ success: false, error: 'User ID is required' });
         }
 
-        const userExists = await prisma.user.findUnique({
-            where: { id: id }
-        });
-
+        const userExists = await prisma.user.findUnique({ where: { id } });
         if (!userExists) {
-            return res.status(404).json({ error: `User with ID ${id} not found` });
+            return res.status(404).json({ success: false, error: `User with ID ${id} not found` });
         }
 
-        await prisma.user.delete({
-            where: { id: id }
+        await prisma.user.delete({ where: { id } });
+
+        return res.status(200).json({
+            success: true,
+            data: { message: `User with ID ${id} deleted successfully` },
         });
-        res.status(200).json({ message: `User with ID ${id} deleted successfully` });
     } catch (error) {
         handleError(res, error, 'Delete User Error');
     }
-}
+};
 
 const getUserById = async (req, res) => {
     try {
@@ -83,18 +72,28 @@ const getUserById = async (req, res) => {
         const { id } = req.params;
 
         if (!id) {
-            return res.status(400).json({ error: 'User ID is required' });
+            return res.status(400).json({ success: false, error: 'User ID is required' });
         }
 
         const user = await prisma.user.findUnique({
-            where: { id: id }
+            where: { id },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                isAdmin: true,
+            },
         });
-        const username = { username: user.name };
-        res.status(200).json(username);
+
+        if (!user) {
+            return res.status(404).json({ success: false, error: 'User not found' });
+        }
+
+        return res.status(200).json({ success: true, data: user });
     } catch (error) {
         handleError(res, error, 'Get User By ID Error');
     }
-}
+};
 
 const updateUser = async (req, res) => {
     try {
@@ -102,36 +101,61 @@ const updateUser = async (req, res) => {
         const { id } = req.params;
 
         if (!id) {
-            return res.status(400).json({ error: 'User ID is required' });
+            return res.status(400).json({ success: false, error: 'User ID is required' });
+        }
+
+        if (!req.body || Object.keys(req.body).length === 0) {
+            return res.status(400).json({ success: false, error: 'No data provided for update' });
+        }
+
+        const userExists = await prisma.user.findUnique({ where: { id } });
+        if (!userExists) {
+            return res.status(404).json({ success: false, error: `User with ID ${id} not found` });
+        }
+
+        if ('isAdmin' in req.body && !req.user.isAdmin) {
+            return res.status(403).json({ success: false, error: 'Only admins can modify admin status' });
+        }
+
+        const updateData = {};
+        const { email, name } = req.body;
+        if (email) updateData.email = email;
+        if (name) updateData.name = name;
+
+        if (req.user.isAdmin && req.body.isAdmin !== undefined) {
+            updateData.isAdmin = req.body.isAdmin;
+        }
+
+        if (Object.keys(updateData).length === 0) {
+            return res.status(400).json({ success: false, error: 'At least one valid field must be provided' });
         }
 
         const updatedUser = await prisma.user.update({
-            where: { id: id },
-            data: req.body
+            where: { id },
+            data: updateData,
         });
-        res.status(200).json(updatedUser);
+
+        return res.status(200).json({ success: true, data: updatedUser });
     } catch (error) {
         handleError(res, error, 'Update User Error');
     }
-}
+};
 
 const getUserByEmail = async (email) => {
     try {
         const prisma = await getPrismaClient();
-        const user = await prisma.user.findUnique({
-            where: { email: email }
-        });
+        const user = await prisma.user.findUnique({ where: { email } });
         return user;
     } catch (error) {
         console.error('Get User By Email Error:', error);
         throw error;
     }
-}
+};
 
 export {
     createUser,
     deleteUser,
     getUserById,
     updateUser,
-    getUserByEmail
+    getUserByEmail,
 };

@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "dotenv -e .env.production -- nodemon src/index.js",
-    "build": "prisma generate",
+    "push": "dotenv -e .env.production -- pnpm dlx prisma db push",
+    "generate": "dotenv -e .env.production -- pnpm dlx prisma generate",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test -- jest --runInBand"
   },
   "keywords": [],
