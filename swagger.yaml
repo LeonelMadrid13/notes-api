@@ -43,7 +43,6 @@ components:
           example: "cuid123456789"
         name:
           type: string
-          nullable: true
           description: User's full name
           example: "John Doe"
         email:
