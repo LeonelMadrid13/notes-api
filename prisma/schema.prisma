@@ -15,13 +15,6 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// Define your data models here
-// Admin and User models are used to manage notes
-// Notes can be created by users and managed by themselves
-// Admins can also manage notes, and they have a role field to distinguish between users and admins
-// Admins can moderate notes created by users, delete inappropriate content, and manage user accounts
-// Each note can have multiple tags 
-
 model note {
   id        String   @id @default(cuid())
   title     String
