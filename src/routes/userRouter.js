@@ -2,8 +2,8 @@
 
 import express from 'express';
 import { getUserById, updateUser, deleteUser } from '../controllers/userController.js';
-import { getAllUsers, isUserAdmin } from '../controllers/adminController.js';
-import { checkToken } from '../middlewares/authMiddleware.js';
+import { getAllUsers } from '../controllers/adminController.js';
+import { checkToken, isUserAdmin } from '../middlewares/authMiddleware.js';
 import { requireSelfOrAdmin } from '../middlewares/requireSelfOrAdmin.js';
 
 const router = express.Router();
