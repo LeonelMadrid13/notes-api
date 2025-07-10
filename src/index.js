@@ -6,6 +6,7 @@ import YAML from 'yamljs';
 import notesRoutes from './routes/notesRouter.js';
 import userRoutes from './routes/userRouter.js';
 import loginRoutes from './routes/loginRouter.js';
+import utilsRouter from './routes/utilsRouter.js';
 
 const app = express();
 const swaggerDocument = YAML.load('./swagger.yaml');
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 // Middleware to handle CORS
 app.use(cors());
 
+app.use('/api', utilsRouter);
 app.use('/api/notes', notesRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', loginRoutes);

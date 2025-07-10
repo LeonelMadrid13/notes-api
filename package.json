@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "dotenv -e .env.production -- NODE_ENV=dev nodemon src/index.js",
+    "dev": "dotenv -e .env.production -- nodemon src/index.js",
     "build": "prisma generate",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test -- jest --runInBand"
   },
