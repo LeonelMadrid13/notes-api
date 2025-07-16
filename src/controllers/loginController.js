@@ -30,22 +30,36 @@ const loginUser = async (req, res) => {
                 .json({ success: false, error: 'Invalid email or password' });
         }
 
-        const token = jwt.sign(
-            {
-                id: user.id,
-                isAdmin: user.isAdmin,
-            },
-            key,
-            { expiresIn: '1h' }
-        );
-
+        const [token, refreshToken] = await Promise.all([
+            jwt.sign({ id: user.id, isAdmin: user.isAdmin }, key, { expiresIn: '1h' }),
+            jwt.sign({ id: user.id, isAdmin: user.isAdmin }, key, { expiresIn: '7d' }),
+        ]);
 
         const { id, name, email: userEmail, isAdmin } = user;
+
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: false,         // Use HTTPS in production!
+            sameSite: 'lax',     // Required for cross-domain
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
+
+        res.cookie('authorization', token, {
+            httpOnly: true,
+            secure: false,         // Use HTTPS in production!
+            sameSite: 'lax',     // Required for cross-domain
+            maxAge: 60 * 60 * 1000 // 1 hour
+        });
+
+        res.cookie('id', id, {
+            httpOnly: true,
+            secure: false,         // Use HTTPS in production! -> change to true for production
+            sameSite: 'lax'     // Required for cross-domain
+        });
 
         return res.status(200).json({
             success: true,
             data: {
-                token,
                 user: {
                     id,
                     name,

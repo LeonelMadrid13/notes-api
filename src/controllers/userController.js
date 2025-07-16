@@ -30,11 +30,36 @@ const createUser = async (req, res) => {
             },
         });
 
-        const token = jwt.sign({ id: user.id }, key, { expiresIn: '1h' });
+        const [token, refreshToken] = await Promise.all([
+                    jwt.sign({ id: user.id, isAdmin: user.isAdmin }, key, { expiresIn: '1h' }),
+                    jwt.sign({ id: user.id, isAdmin: user.isAdmin }, key, { expiresIn: '7d' }),
+                ]);
+
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: true,         // Use HTTPS in production!
+            sameSite: 'none',     // Required for cross-domain
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
+
+        res.cookie('authorization', token, {
+            httpOnly: true,
+            secure: true,         // Use HTTPS in production!
+            sameSite: 'none',     // Required for cross-domain
+            maxAge: 60 * 60 * 1000 // 1 hour
+        });
+
+        res.cookie('id', user.id, {
+            httpOnly: true,
+            secure: true,         // Use HTTPS in production!
+            sameSite: 'none'     // Required for cross-domain
+        });
 
         return res.status(201).json({
             success: true,
-            data: { token, id: user.id },
+            data: { 
+                id: user.id 
+            },
         });
     } catch (error) {
         handleError(res, error, 'Create User Error');

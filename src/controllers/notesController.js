@@ -6,6 +6,8 @@ const createNote = async (req, res) => {
         const prisma = await getPrismaClient();
         const { title, content, userId, tags } = req.body;
 
+        console.log({req: req.headers})
+
         if (!title || !content || !userId) {
             return res.status(400).json({ error: 'Title, content, and userId are required' });
         }

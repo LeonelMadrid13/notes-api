@@ -5,7 +5,7 @@ const key = process.env.JWT_SECRET || 'privatekey';
 const checkToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
 
-    // 🔒 Reject if no Authorization header
+    // 🔍 Check if Authorization header is presen
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({
             success: false,
@@ -13,7 +13,14 @@ const checkToken = (req, res, next) => {
         });
     }
 
+    // 🪙 Extract token from header
     const token = authHeader.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({
+            success: false,
+            error: 'Unauthorized: No token provided',
+        });
+    }
 
     // ✅ Verify token
     jwt.verify(token, key, (err, decoded) => {

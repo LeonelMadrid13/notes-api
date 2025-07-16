@@ -18,7 +18,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Middleware to handle CORS
-app.use(cors());
+app.use(cors(
+    {
+        origin: process.env.CORS_ORIGIN || 'http://localhost:3000', // Allow localhost by default
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        credentials: true, // Allow cookies to be sent
+    }
+));
 
 app.use(sanitizer.clean({
     xss: true,
